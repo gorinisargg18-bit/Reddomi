@@ -12,8 +12,8 @@ export DOOTA_START_PORTAL_AUTH0_PORTAL_CLIENT_SECRET="$AUTH0_SECRET"
 export DOOTA_START_PORTAL_AUTH0_DOMAIN="$AUTH0_DOMAIN"
 
 # Reddit
-# App credentials are optional for the cookie-based Reddit login flow.
-# Only provide client ID / secret if you are using OAuth-based Reddit integration.
+# The current MVP uses cookie-based Reddit login only.
+# These Reddit OAuth values are not required for the current flow.
 export DOOTA_START_PORTAL_REDDIT_REDIRECT_URL="http://localhost:3000/auth/callback"
 export DOOTA_START_PORTAL_REDDIT_CLIENT_ID="xxx"
 export DOOTA_START_PORTAL_REDDIT_CLIENT_SECRET="xxx"

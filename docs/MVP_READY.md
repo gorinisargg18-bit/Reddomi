@@ -7,7 +7,7 @@ This document captures the minimum path to make the current repo feel launch-rea
 - Go backend worker and portal bootstrap flow
 - Frontend portal app for dashboard and onboarding
 - Subscription/automation plan logic for usage limits
-- Reddit automation paths via browser cookie-based login for MVP, with optional OAuth support for broader Reddit API use
+- Reddit automation paths via browser cookie-based login for MVP only
 
 ## MVP launch blockers to confirm
 1. Reddit credentials or browser automation are configured for customer demos
