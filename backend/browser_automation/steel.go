@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
@@ -63,14 +64,7 @@ func (r steelBrowserClient) GetCDPInfo(ctx context.Context, input CDPInput) (*CD
 		// Note: SolveCaptcha not supported on hobby plan
 		payload.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-		if input.UseProxy && input.Alpha2CountryCode != "" {
-			payload.UseProxy = &struct {
-				GeoLocation struct {
-					Country string `json:"country"`
-				} `json:"geolocation"`
-			}{}
-			payload.UseProxy.GeoLocation.Country = input.GetCountryCode()
-		}
+		// Do NOT set useProxy - hobby plan doesn't support Steel proxies
 
 		jsonData, err := json.Marshal(payload)
 		if err != nil {
@@ -113,9 +107,17 @@ func (r steelBrowserClient) GetCDPInfo(ctx context.Context, input CDPInput) (*CD
 
 		r.logger.Info("steel browser raw response", zap.Any("body", sessionResp))
 
+		// Ensure we append the API key correctly depending on whether the
+		// websocket url already contains query params.
+		ws := sessionResp.WebsocketUrl
+		sep := "&"
+		if !strings.Contains(ws, "?") {
+			sep = "?"
+		}
+
 		return &CDPInfo{
 			SessionID:  sessionResp.Id,
-			WSEndpoint: fmt.Sprintf("%s&apiKey=%s", sessionResp.WebsocketUrl, r.Token),
+			WSEndpoint: fmt.Sprintf("%s%sapiKey=%s", ws, sep, r.Token),
 			LiveURL:    fmt.Sprintf("%s?interactive=true&showControls=false", sessionResp.DebugUrl),
 			ReleaseSession: func() error {
 				r.logger.Info("releasing steel browser session", zap.String("session_id", sessionResp.Id))
